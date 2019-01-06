@@ -1,0 +1,164 @@
+王伟超
+  wangweichao@tedu.cn
+1.网络爬虫
+  1.定义:网络蜘蛛 网络机器人,抓取网络数据的程序
+  2.总结:用Python程序模仿人类去访问网站,模仿的越逼真越好
+  3.爬取数据目的:通过有效地大量数据分析市场走势,公司决策
+2.企业获取数据的方式
+  1. 公司自有数据
+  2. 第三方数据平台购买
+     数据堂  贵阳大数据交易所
+  3. 爬虫爬取数据
+     市场上没有或者价格太高,利用爬虫程序去爬取
+3. Python做爬虫优势
+  请求模块,解析模块丰富成熟,强大的scrapy框架
+  PHP : 对多线程,异步支持不太好
+  JAVA: 代码笨重,代码量很大
+  C/C++:虽然效率高,但是代码成型很慢
+4. 爬虫分类
+  1. 通用网络爬虫(搜索引擎用,遵守robots协议)
+    https://www.taobao.com/robots.txt
+    1. 搜索引擎如何获取1个新网站的URL
+      1. 网站主动向搜索引擎提供(百度站长平台)
+      2. 和DNS服务商(万网)合作,快速收录新网站
+  2. 聚焦网络爬虫
+    自己写的爬虫程序 : 面向需求的爬虫
+5. 数据爬取步骤
+  1. 确定要爬取的URL地址
+  2. 向网站发请求获取相应的HTML页面
+  3. 提取HTML页面中有用的数据
+     1. 所需数据,保存
+     2. 页面中新的URL,继续第2步
+6. Anaconda和Spyder
+  1. Anaconda : 科技计算的集成开发环境(集成了好多库,ipython等等)
+  2. Spyder : 开发工具(环境)
+    常用快捷键
+      1. 注释/取消注释 : Ctrl + 1
+      2. 运行程序      : F5
+      3. TAB自动补全
+7. Chrome浏览器插件 
+  1. 安装步骤
+    1. 浏览器右上角 - 更多工具 - 扩展程序
+    2. 点开右上角 - 打开开发者模式
+    3. 把插件拖拽到浏览器页面,释放鼠标点击添加扩展
+8、WEB回顾
+  1、HTTP和HTTPS
+    1、HTTP : 80
+    2、HTTS : 443,HTTP升级版,加了1个安全套接层
+  2、GET和POST
+    1、GET : 查询参数会在URL地址上显示
+    2、POST：查询参数和需要提交的数据隐藏在Form表单中,不会在URL地址中
+  3、URL ：统一资源定位符
+    https:// item.jd.com/   11483256323.html#detail
+      协议   域名/IP地址    访问资源的路径   锚点
+  4、User-Agent
+    记录了用户的浏览器、操作系统等
+    Mozilla/5.0 (Windows NT 6.1; WOW64) AppleWebKit/535.1 (KHTML, like Gecko) Chrome/14.0.835.163 Safari/535.1
+
+    Mozilla Firefox : (Gecko)
+    IE              : Trident
+    Apple           : Webkit(like KHTML)
+    Google          : Chrome(like Webkit)
+    其他浏览器都是模仿IE/Chrome
+9、爬虫请求模块
+  1、版本
+    1、python2 ：urllib、urllib2
+    2、python3 ：urllib.request
+  2、常用方法
+    1、urllib.request.urlopen("URL地址")
+      作用 ：向网站发起1个请求,并获取响应
+          字节流 = response.read()
+	  字符串 = response.read().decode("utf-8")
+	  encode() : string -> bytes
+	  decode() : bytes  -> string
+    2. urllib.request.Request(url,{User-Agent})
+      1. 参数
+        1. url
+	2. headers = {"User-Agent":"Mozilla/5.0"}
+      2. 使用流程
+        1. 利用Request()方法构建请求对象
+	  req = urllib.request.Request(url,headers)
+	2. 利用urlopen()方法获取响应对象
+	  res = urllib.request.urllopen(req)
+	3. 利用响应对象的read().decode("utf-8")获取内容
+	  html = res.read().decode("utf-8")
+    3. 响应对象(res)的方法
+      1. res.read() : 读取服务器响应的内容
+      2. res.getcode() : 返回HTTP的响应码
+         200 : 成功
+	 4XX : 服务器页面出错
+	 5XX : 服务器出错
+      3. geturl()
+        返回实际数据的URL地址
+  3. urllib.parse模块 : URL编码模块
+    1. urlencode(字典) : {"wd":"美女"}
+       urllib.parse.urlencode({"wd":"美女"})
+    2. quote(字符串) # 参数为字符串
+       urllib.parse.quote("美女")
+       结果 : '%E7%BE%8E%E5%A5%B3'
+    3. unquote(字符串)
+       urllib.parse.unquote('%E7%BE%8E%E5%A5%B3')
+       结果 : 美女
+  4. 练习 : 百度贴吧数据抓取
+    1.要求
+      1. 输入要抓取的贴吧名称
+      2. 输入贴吧的起始页和终止页
+      3. 把每一页的内容保存到本地
+         第1页.html  第2页.html ... ... 
+    2. 步骤
+      1. 找URL规律,拼接URL
+        第1页:http://tieba.baidu.com/f?kw=??&pn=0
+	第2页:http://tieba.baidu.com/f?kw=??&pn=50
+	第n页:pn=(n-1)*50
+      2. 获取网页内容(发请求获响应)
+      3. 保存(本地,数据库)
+10.请求方式及实例
+  1. GET
+    特点:查询参数在URL地址中显示
+    案例:百度贴吧
+  2. POST(在Requests()方法中添加data参数)
+    1.特点:URL地址无变化,数据是在Form表单中
+    2.data:表单数据要以bytes类型提交,不能是string
+    3.处理表单数据为bytes数据类型
+      1.把form表单数据定义为1个大字典
+      2.urlencode(data).encode("utf-8")
+        先编码得到字符串,再转码得到bytes数据类型
+  3. json模块
+    1. json.loads(json格式的字符串)
+      把json格式的字符串转为Python中的字典
+      rDict = json.loads('{"key":"value"}')
+      rDict结果: 字典{"key":"value"}
+11.正则表达式(re解析模块)
+  1. re使用方法1
+    1.创建编译对象 : p = re.compile(r'正则表达式')
+    2.匹配字符串   : rList = p.findall(html)
+  2. re使用方法2
+    rList = re.findall(r'正则表达式',html)
+  3. 表达式
+    .  : 任意1个字符(不包括\n)
+    \d : 1个数字
+    \s : 空白字符
+    \S : 非空白字符
+
+    匹配所有字符的方式:
+    [\s\S]*
+    .*,re.S     
+    re.S作用 : 让 . 能够匹配\n在内的所有字符
+    
+    # 复习
+    贪婪匹配和非贪婪匹配
+    正则表达式的分组
+
+
+
+                   
+
+
+
+
+
+
+
+
+
+

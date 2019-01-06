@@ -1,0 +1,171 @@
+Day05回顾
+1. selenium+phantomjs/Chromedriver
+  1. selenium : Web自动化测试工具
+  2. phantomjs: 无界面浏览器(无头浏览器)
+2. 使用流程
+  1. 导入模块
+    from selenium import webdriver
+  2. 创建浏览器对象
+    driver = webdriver.PhantomJS(executable_path='')
+    driver = webdriver.Chrome()
+  3. 获取网页信息
+    driver.get(url)
+  4. 查找节点位置
+    ele = driver.find_element_by_id('')
+  5. 发送文字
+    ele.send_keys('')
+  6. 点击
+    click = driver.find_element_by_id('')
+    click.click()
+  7. 关闭浏览器
+    driver.quit()
+3. 常用方法
+  1. driver.get(url)
+  2. driver.page_source
+  3. driver.page_source.find('')
+     失败(未找到) : -1
+  4. driver.find_element_by_class_name('')
+  5. driver.find_elements_by_class_name('')
+  6. driver.find_elements_by_xpath('')
+  7. 对象名.send_keys('')
+  8. 对象名.click()
+  9. driver.quit()
+4. 使用chromedriver一定要下载对应版本的
+5. 设置无界面
+  opt = webdriver.ChromeOptions()
+  opt.set_headless()
+  opt.add_arguments('window-size=...')
+  driver = webdriver.Chrome(options=opt)
+6. driver如何执行js脚本
+  driver.execute_script('window.srollTo(0,document.body.scrollHeight')
+7. 多线程爬虫
+  1. 应用场景
+    1. 多进程 : 大量的密集的计算
+    2. 多线程 : 依赖网络I/O程序(爬虫)
+**************************************
+1. 多线程爬虫
+  1. 队列(from multiprocessing import Queue)
+    UrlQueue = Queue()
+    UrlQueue.put(url)
+    UrlQueue.get() # 阻塞
+                block=True,timeout=2
+    UrlQueue.empty()
+  2. 线程(from threading import Thread)
+    t = Thread(target=getPage)
+    t.start()
+    t.join()
+2. 小米应用商店数据爬取(多线程)
+  1. 网址 : 百度搜索 小米应用商店 
+  2. 分类及爬取内容
+    学习教育
+    基准xpath: //ul[@id="all-applist"]//li    
+    应用名称 : ./h5/a
+    应用链接 : ./h5/a/@href
+3. BeautifulSoup(解析)
+  1. HTML或者XML解析器,依赖于lxml
+  2. 安装 : conda install beautifulsoup4
+  3. 使用流程
+    1. 导入模块
+       from bs4 import BeautifulSoup
+    2. 创建解析对象
+       soup = BeautifulSoup(html,'lxml')
+    3. 查找节点对象
+       rList = soup.find_all('div',{'id':''})
+  4. 支持解析库
+    1. lxml : 速度快,文档容错能力强 
+    2. html.parser : python标准库
+       速度一般,文档容错能力一般
+    3. xml  : 速度快,文档容错能力强
+4. Scrapy网络爬虫框架
+  1. 异步处理框架,可配置和可扩展程度非常高
+  2. 安装
+    1. Windows
+      Anaconda Prompt : conda install Scrapy
+      如果安装慢(使用如下清华镜像) :
+        conda config --add channels https://mirrors.tuna.tsinghua.edu.cn/anaconda/cloud/msys2/
+        conda config --add channels https://mirrors.tuna.tsinghua.edu.cn/anaconda/cloud/conda-forge/
+        conda config --add channels https://mirrors.tuna.tsinghua.edu.cn/anaconda/pkgs/free/
+        conda config --set show_channel_urls yes
+        conda install Scrapy
+    2. Ubuntu
+        1、安装scrapy框架
+          1、安装依赖包 ：
+		        1、sudo apt-get install python3-dev
+		        2、sudo apt-get install python-pip
+		        3、sudo apt-get install libxml2-dev
+		        4、sudo apt-get install libxslt1-dev
+		        5、sudo apt-get install zlib1g-dev
+		        6、sudo apt-get install libffi-dev
+		        7、sudo apt-get install libssl-dev
+	        2. sudo pip3 install pyasn1==0.4.1
+	        3、安装Scrapy
+		        1、sudo pip3  install Scrapy           ####注意此处S为大写
+5. Scrapy框架组成
+  1. 引擎(Engine) : 整个框架核心
+  2. 调度器(Scheduler)
+    接受从引擎发过来的URL,入队列
+  3. 下载器(Downloader)
+    获取response,返回给爬虫程序
+  4. 项目管道(Item Pipeline)
+    数据处理
+  5. 中间件
+    1. 下载器中间件(Downloader Middlewares)
+      处理引擎与下载器之间的请求及响应
+    2. 蜘蛛中间件(Spider Middlewares)
+      处理爬虫程序输入响应和输出结果以及新的请求
+6. 制作Scrapy爬虫项目步骤
+  1. 新建项目
+    scrapy startproject 项目名
+  2. 明确目标(items.py)
+  3. 制作爬虫程序
+    cd spiders
+    scrapy genspider 文件名 域名
+  4. 处理数据(pipelines.py)
+  5. 全局配置(settings.py)
+  6. 运行爬虫项目
+    scrapy crawl 爬虫名
+7. scrapy项目文件
+  1. 目录结构
+    Baidu/
+      |-- scrapy.cfg : 项目基本配置,不用改
+      |-- Baidu/     : 项目目录
+            |--items.py : 定义爬取数据结构
+            |--middlewares.py : 中间件
+            |--pipelines.py : 管道文件(数据)
+            |--settings.py  : 全局配置
+            |--spiders/ 
+                  |--baidu.py : 爬虫程序
+  2. settings.py配置
+    # 设置User-Agent
+    USER_AGENT = 'Mozilla/5.0'
+    # 是否遵循robots协议,设置为False
+    ROBOTSTXT_OBEY = False
+    # 最大并发量,默认16
+    CONCURRENT_REQUESTS = 32
+    # 下载延迟时间
+    DOWNLOAD_DELAY = 1
+    # 请求头(也可以设置User-Agent)
+    DEFAULT_REQUEST_HEADERS = {
+      'User-Agent': 'Mozilla/5.0',
+      'Accept': 'text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8',
+      'Accept-Language': 'en',
+     }
+    # 下载器中间件
+    DOWNLOADER_MIDDLEWARES = {
+       'Baidu.middlewares.randomProxyMiddleware': 543,
+       'Baidu.middlewares.randomUserAgentMiddleware' : 300,
+     }
+    # 项目管道
+    ITEM_PIPELINES = {
+      'Baidu.pipelines.BaiduPipeline': 300,
+      'Baidu.pipelines.BaiduMongoPipeline' : 200,
+      'Baidu.pipelines.BaiduMysqlPipeline' : 100,
+     }
+    ## 优先级1-1000,数字越小优先级越高
+8. Pycharm运行Scrapy项目
+  1. 项目写完之后创建begin.py(和scrapy.cfg同目录)
+  2. begin.py
+     from scrapy import cmdline
+     cmdline.execute('scrapy crawl baidu'.split()) 
+  3. 配置pycharm的python环境
+    File -> settings -> Project Interpreter -> 右上角...add -> existinig environment -> 选择你自己Anaconda中python的路径(C:\ProgramData\Anaconda3\python.exe) -> 点击OK

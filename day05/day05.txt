@@ -1,0 +1,190 @@
+Day04回顾
+1. Fiddler抓包工具
+  1. 设置Fiddler抓包工具(整数 端口)
+  2. 设置浏览器(SwitchOmega浏览器插件)
+2. 常用菜单
+  1. Inspector
+    1. Headers
+    2. WebForms(body Query String)
+    3. Raw
+3. lxml
+  1. 使用流程
+    1. from lxml import etree
+    2. parseHtml = etree.HTML(html)
+    3. rList = parseHtml.xpath('')
+  2. xpath高级
+    1. 基准xpath表达式(节点对象列表)
+    2. for r in [节点对象列表]:
+           username = r.xpath('./表达式')
+4. json模块
+  1. json.loads() : join->python
+  2. json.dumps() : python->json
+5. Ajax动态加载
+  1. 抓包工具: WebForms->QuerySting
+  2. parmas = {QuerySting一堆查询参数}
+  3. URL地址 : 抓包工具Raw下的GET地址
+***************************************
+Day05笔记
+1. 豆瓣电影案例(用户输入类型 数量)
+
+2. selenium+phantomjs/chrome强大网络爬虫组合
+  1. selenium
+    1. Web自动化测试工具,应用于Web自动化测试
+    2. 特点
+      1. 可以运行在浏览器,根据指定命令操作浏览器,让浏览器自动加载页面
+      2. 只是工具,需要与第三方浏览器结合使用
+    3. 安装
+      (管理员Anaconda Prompt):
+        conda install selenium
+  2. phantomjs
+    1. 无界面浏览器(无头浏览器)
+    2. 特点
+      1. 把网站加载到内存进行页面加载
+      2. 运行高效
+    3. Windows安装
+      1. 把下载的exe文件,拷贝到python安装目录的Scripts目录下
+        C:\ProgramData\Anaconda3\Scripts
+        cmd
+        phantomjs -v
+    4. Ubuntu安装
+      1. 下载安装包并解压:phantomjs-2.1.1-.
+      2. cd到解压的路径的 bin 目录下
+      3. 把文件拷贝到 /usr/bin/ 目录中
+        sudo cp phantomjs /usr/bin
+      4. 终端 : phantomjs -v 
+
+
+
+
+
+
+
+
+  3. chromedriver
+    1. 下载并安装
+      1. https://chromedriver.storage.googleapis.com/index.html
+      2. 查看Chrome浏览器版本
+        设置 - 帮助 - 关于Google chrome 
+      3. 拷贝chromdriver.exe到Scripts目录下
+      4. chromedriver -v
+3. 示例代码
+4. 浏览器对象(driver)的方法
+  1. driver.get(url) : 发请求,获响应
+  2. driver.page_source : 获取html源码
+  3. driver.page_source.find('字符串')
+     查找失败 : -1
+  4. 单元素查找(节点对象,只找第1个,search)
+    1. driver.find_element_by_id('')
+    2. driver.find_element_by_name('')
+    3. driver.find_element_by_class_name()
+    4. driver.find_element_by_xpath('')
+  5. 多元素查找(列表)
+    1. driver.find_elements_by_...()
+    2. 返回值 : 列表
+    3. 利用节点对象的 text 属性可获取文本内容
+  6. 节点对象.send_keys('')
+  7. 节点对象.click()
+5. 京东商品爬取案例
+  1. 目标
+    1. 商品名称
+    2. 商品价格
+    3. 评论数量
+    4. 商家名称
+
+driver.find_element_by_xpath('').text
+
+//div[@id="J_goodsList"]//li
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+Anaconda Prompt(管理员):
+
+         conda  install  selenium 
+
+
+
+
+
+
+
+
+
+
+3. 多线程爬虫
+  1. 进程
+    1. 系统中正在运行的一个程序
+    2. 1个CPU核心1次只能执行1个进程,其他进程处于非运行状态
+    3. N个CPU核心可同时执行N个任务
+  2. 线程
+    1. 进程中包含执行单元,1个进程可有多个线程
+    2. 线程使用所属进程空间/资源
+    3. 互斥锁 : 防止多个线程同时使用共享资源
+  3. GIL : 全局解释锁
+     执行通行证,仅此1个,拿到了通行证就可执行,否则等
+  4. 应用场景
+    1. 多进程 : 大量的密集的计算
+    2. 多线程 : I/O密集
+       1. 爬虫 : 网络I/O
+       2. 写文件 : 本地磁盘I/O
+
+
+
+n = 5000
+# 线程1
+def f1():
+    for i in range(10):
+        n = n + 1
+
+# 线程2
+def f2():
+    for i in range(10):
+        n = n - 1
+
+n = n + 1
+# 执行(分多条语句执行,先赋值给临时变量,再赋值给n)
+  x1 = n + 1
+  n = x1
+
+# n = 5000
+  线程1 : x1 = n + 1  # n->5000 x1->5001
+  线程2 : x2 = n - 1  # n->5000 x2->4999
+  纤程2 : n = x2      # n->4999
+  线程1 : n = x1      # n->5001
+
+
+
+
+
+
+
+
+
+
+
+  
+
+
+
+https://chromedriver.storage.googleapis.com/index.html
+
+
+
+      
+
+
+
+

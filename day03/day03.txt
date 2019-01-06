@@ -1,0 +1,205 @@
+day02回顾
+1. 正则解析
+  1. 分组(想要抓取什么内容就加小括号())
+  2. 正则方法
+    p = re.compile(r'',re.S)
+    rList = p.findall(html)
+    [(),(),(),()]
+  3. 贪婪匹配 : .*
+  4. 非贪婪匹配: .*?
+2. 数据抓取步骤
+  1. 找URL
+  2. 写正则表达式
+  3. 定义类,写程序框架
+  4. 补全代码
+3. 存入CSV文件
+  import csv 
+  with open("a.csv","a",newline="") as f:
+      writer = csv.writer(f)
+      writer.writerow([列表])
+4. 存入MySQL数据库
+  1. db = pymsql.connect("",.......)
+  2. cursor = db.cursor()
+  3. cursor.execute('sql命令',[列表补位])
+  4. db.commit()
+  5. cursor.close()
+  6. db.close()
+5. mongodb流程
+  1. conn = pymongo.MongoClient("",27017)
+  2. db = conn["库名"]
+  3. myset = db["集合名"]
+  4. myset.insert_one({字典})
+  终端操作
+  1. show dbs
+  2. use 库名
+  3. show collections
+  4. db.集合名.find().pretty()
+  5. db.集合名.count()
+  6. db.dropDatabase()
+6. 远程存入MySQL
+  1. 开启远程连接 : # bind-address=127.0.0.1
+  2. 添加授权用户
+    mysql>grant all privileges on *.* to "root"@"%" indentified by "123456" with grant option;
+  3. 设置防火墙
+    方法1 :允许外部访问本机3306端口
+      sudo ufw allow 3306
+    方法2 :直接关闭 : sudo ufw disable
+7. Anaconda Prompt安装模块
+  1. 右键,以管理员身份去打开 Anaconda Prompt
+  2. 在(base)C:\Users\Administrator>执行
+     conda install 模块名
+*****************************************
+Day03笔记
+1. Cookie模拟登录
+  1. 什么是cookie session
+    HTTP协议是一种无连接协议,客户端和服务器交互仅仅局限于请求/响应之间,下一次再请求时,服务器会认为是一个新的客户端,为了维护他们之间的连接,让服务器知道是上一个用户发起的请求,必须在一个地方保存客户端信息
+    cookie : 客户端信息确定用户身份
+    session: 服务端信息确定用户身份
+  2. 使用cookie模拟登录人人网
+    1. 先登录成功1次,获取到cookie
+    2. 拿着cookie去抓取需要登录才能看到的页面
+2. requests模块
+  1. 安装 :以管理员身份去打开Anaconda Prompt
+     conda install requests
+  2. 常用方法
+    1. get(url,headers=headers)
+    2. 响应对象res属性
+      1. encoding : 响应编码
+         res.encoding = "utf-8"
+      2. text     : 字符串
+      3. content  : bytes
+      4. status_code : HTTP响应码
+      5. url      : 返回实际数据的URL地址
+    3. 三步走
+      1. res = requests.get(url,headers...)
+      2. res.encoding = "utf-8"
+      3. html = res.text
+    4. 非结构化数据保存(图片)
+      html = res.content
+      with open("***.jpg","wb") as f:
+          f.write(html)
+3. 查询参数(params) : 字典
+  res = requests.get(baseurl,params={},.)
+  自动对params字典进行编码,自动拼接URL地址
+  输入搜索内容,再输入第几页
+4. 使用代理(proxies)
+  1. 获取IP地址的网站
+    快代理
+    全网代理
+  2. 普通代理
+    1. 格式 proxies={"协议":"协议://IP:端口号"}
+      测试网站 : http://httpbin.org/get
+      proxies={"http":"http://37.192.32.213:36344"}
+      测试小思路
+      try:
+        res = requests.get(url,timeout=3)
+        if res.status_code == 200:
+            [].append()
+        except:
+            pass
+  3. 私密代理
+    1. 格式
+      proxies={"http":"http://用户名:密码@IP地址:端口号"}
+5. Web客户端验证(auth)
+  1. auth = ("用户名","密码")
+     auth = ("tarenacode","code_2013")
+6. SSL证书认证(verify)
+  1. verify = True(默认)：进行CA证书认证
+  2. verify = False    ：不进行认证
+  ## 参数为True进行认证,去访问https网站(没有进行CA认证),抛出异常：SSLError
+7. 总结
+  res = requests.get(url,params,headers,proxies,auth,verify)
+8. post()方法
+  1. requests.post(url,data=data,... ...)
+  2. data:字典,Form表单数据,不用编码,不用转码
+******************************************
+9. xpath工具(解析)
+  1. 在XML文档中查找信息的语言,同样适用于HTML文档的检索
+  2. xpath辅助工具
+    1. Chrome插件 ：XPath Helper
+      打开/关闭 ：Ctrl + shift + x
+    2. Firefox插件：XPath Checker
+    3. XPath编辑工具：XML quire
+  3. 匹配演示
+    1. 查找所有的book节点 : //book
+    2. 查找所有book节点下的title子节点中,lang属性为"en"的节点
+      //book/title[@lang="en"]
+    3. 查找bookstore下的第2个book节点下的title子节点
+      /bookstore/book[2]/title
+  4. 选取节点
+    // : 从整个文档中查找节点
+       //price  //book//price
+    @  : 选取某个节点的属性值
+       //title[@lang="en"]
+  5. @的使用
+    1. 选取1类节点 : //title[@lang="en"]
+    2. 选取存在某个属性节点://title[@lang]
+    3. 选取节点的属性值: //title/@lang
+  6. 匹配多路径 ：|
+    1. xpath表达式1  |  xpath表达式2
+    2. 获取所有book节点下的title子节点和price子节点
+      //book/title | //book/price
+  7. 函数
+    1. contains() :匹配一个属性值中包含某些字符串的节点
+      //title[contains(@lang,"e")]
+      //div[contains(@class,"njjzw")]
+        <div class="njjzw10389403">
+        <div class="njjzw12302932">
+        <div class="njjzw23092838">
+    2. text() : 获取文本
+      //title[contains(@lang,"e")]/text()
+10. lxml库及xpath使用
+  1. 安装
+    管理员Prompt : conda install lxml
+  2. 使用流程
+    1. 导模块
+      from lxml import etree
+    2. 创建解析对象
+      parseHtml = etree.HTML(html)
+    3. 调用xpath
+      rList=parseHtml.xpath('xpath表达式')
+    ## 只要调用了xpath,结果一定是列表 ##
+
+
+
+
+
+
+
+
+
+
+    
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

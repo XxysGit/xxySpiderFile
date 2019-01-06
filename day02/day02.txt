@@ -1,0 +1,156 @@
+Day01回顾
+1. 请求模块urllib.request
+  1. Request(url,data=data,headers=headers)
+  2. urlopen(req)
+2. 响应对象res的方法
+  1. res.read() # 数据类型bytes
+     res.read().decode("utf-8") # 数据类型string
+  2. res.getcode()
+  3. res.geturl() # 返回实际数据的URL
+3. url编码模块(urllib.parse)
+  1. urlencode({字典})
+    原始数据(1个查询参数): kw={"kw":"只手遮天"}
+    urlencode后 : 'kw=%E8...'
+    原始数据(2个查询参数): kw={"kw":"美女","pn":50}
+    urlencode后 : 'kw=%E7%BE%8E%E5%A5%B3&pn=50' 
+  2. quote('字符串')
+    原始数据 : '屠龙刀'
+    quote后 : '%E5%B1%A0%E9%BE%99%E5%88%80'
+  3. unquote('编码后的字符串')
+4. 数据爬取步骤
+  1. 找URL规律(拼接)
+  2. 获取响应内容
+  3. 保存(本地 数据库)
+5. 请求方式
+  1. GET : 查询参数会在URL地址上显示
+  2. POST(参数名data) : 查询参数都在Form表单中
+    注意 : data一定要以bytes类型提交
+    data = {......}
+    data = urllib.parse.urlencode(data).encode("utf-8")
+6.json模块
+  Dict = josn.loads(json格式的字符串)
+  loads() : 把json格式的字符串转为python中的数据类型
+**************************************************
+Day02笔记
+1. 数据的分类
+  1. 结构化的数据
+    特点:有固定的格式,如:HTML XML JSON
+  2. 非结构化数据
+    如 : 图片 视频,这类数据一般存储为二进制
+2. re模块
+  1. 使用流程
+    1. p = re.compile(r'正则表达式',re.S)
+    2. rObj = p.match(html) # 匹配字符串开头,返回对象
+    3. r = r.group()
+  2. 常用方法
+    1. findall(html) : 所有全部匹配,返回1个列表
+    2. match(html)   : 匹配字符串开头,返回对象
+    3. search(html)  : 从开始匹配,匹配到第1个结束,对象
+    4. 对象.group()  : 从match或search返回对象中取结果
+  3. 元字符
+    .    : 任意字符(不包括\n)
+    \d   : 数字
+    \s   : 空白字符
+    \S   : 非空白字符 
+       [\s\S]任意1个字符,等同于p=re.compile('.',re.S)                       p=re.compile('[\s\S]')
+    [...] : 包含[]中内容
+    \w   : 数字 字母 下划线
+
+    *  : 0次或n次
+    ?  : 0次或1次
+    +  : 1次或n次
+    {m}: m次
+    {m,n} : m-n次
+  4. 贪婪匹配和非贪婪匹配
+    .*  : 贪婪匹配,在整个表达式匹配成功的前提下,尽可能多的去匹配*
+    .*? : 贪婪匹配,在整个表达式匹配成功的前提下,尽可能少的去匹配*
+  5. 正则表达式分组(findall())
+    import re 
+    s = "A B C D"
+    p1 = re.compile('\w+\s+\w+')
+    print(p1.findall(s))
+    # 第1步 : 匹配整体正则['A B', 'C D']
+    # 第2步 : 匹配分组内容['A','C']
+    p2 = re.compile('(\w+)\s+\w+')
+    print(p2.findall(s))
+    # 第1步 : 匹配整体正则['A B']
+    # 第2步 : [('A','B')]
+    p3 = re.compile('(\w+)\s+(\w+)')
+    print(p3.findall(s))
+3. 爬取内涵段子脑筋急转弯
+  网址 : www.neihan8.com
+  步骤
+    1. URL规律 
+    第1页:https://www.neihan8.com/njjzw/
+    第2页:https://www.neihan8.com/njjzw/index_2.html
+    第n页:https://www.neihan8.com/njjzw/index_n.html
+    2. 用正则匹配出内容
+      <div class="text-.*?title="(.*?)">.*?class="desc">(.*?)</div>
+    3. 写代码
+4. csv模块使用流程
+  1. 打开csv文件
+     with open("测试.csv","w",newline="",encoding="gb18030") as f:
+  2. 初始化写入对象
+     writer = csv.writer(f)
+  3. 写入数据
+     writer.writerow(列表)
+5. 猫眼电影数据抓取
+  1. 网址 : 百度猫眼电影 - 榜单 - top100榜
+  2. 找URL规律
+    第1页:https://maoyan.com/board/4?offset=0
+    第2页:https://maoyan.com/board/4?offset=10
+    第n页:offset=(n-1)*10
+  3. 写正则表达式
+    <div class="movie-item-info">.*?title="(.*?)".*?class="star">(.*?)</p>.*?releasetime">(.*?)</p>
+  4. 写代码
+6. 数据持久化存储(mongodb)
+  1. 回顾pymongo
+  2. 回顾pymysql
+7. Anaconda安装模块
+  1. 进入到Anaconda Prompt终端
+  2. 执行安装命令  
+    conda install pymongo
+    conda install pymysql
+8. 远程存入MySQL数据库
+  1. 开启远程连接,
+     注释掉: # bind-address=127.0.0.1
+     /etc/mysql/mysql.conf.d/mysqld.cnf
+     改完之后重启mysql服务
+  2. 添加授权用户
+     mysql> grant all privileges on *.* to "用户名"@"%" identified by "123456" with grant option;
+  3. 关闭防火墙 
+     sudo ufw disable
+  或者将第3步改为给防火墙添加规则
+  3. 添加规则允许外部访问3306端口
+    sudo ufw allow 3306
+9. Ubuntu中防火墙(ufw)基本操作
+  1. 打开 : sudo ufw enable
+  2. 关闭 : sudo ufw disable 
+  3. 添加规则 : sudo ufw allow 端口号
+  
+  
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+猫眼电影 - 榜单 - top100榜
+电影名称
+主演
+上映时间
+
+
+
+

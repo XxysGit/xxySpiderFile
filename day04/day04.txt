@@ -1,0 +1,140 @@
+Day03回顾
+1. Cookie模拟登录
+  1. 先登录成功1次,抓取到Cookie
+  2. 把抓到的带有cookie的headers写到程序里
+2. requests模块方法
+  1. get()
+    1. 查询参数 : params -> 字典
+    2. 代理 : proxies -> 字典
+      1. 普通代理
+        {"协议":"协议://IP地址:端口号"}
+      2. 私密代理
+        {"协议":"协议://用户名:密码@IP地址:端口号"}
+    3. Web客户端验证 : auth -> 元组
+    4. ssl证书认证   : verify
+      verify默认为True
+    5. timeout
+  2. post()方法
+    data -> 字典,Form表单数据
+  3. 响应对象的属性
+    1. text : 字符串
+    2. content : bytes
+    3. encoding : res.encoding = "utf-8"
+    4. status_code : HTTP响应码
+    5. url : 返回实际数据的URL地址
+2. lxml解析库
+  1. 使用流程
+    1. from lxml import etree
+    2. parseHtml = etree.HTML(html)
+    3. rList = parseHtml.xpath('表达式')
+  2. xpath的匹配规则
+    1. 获取节点对象
+      //div[@class="Tiger"]
+    2. 获取节点属性值
+      //div[@class="Tiger"]//a/@src
+    3. 函数
+      //div[contains(@class,"bai")]/a/@href
+  3. 获取节点对象内容
+    1. xpath表达式中 : .../text()
+    2. 节点对象.text
+      for r in rList:
+        print(r.text)
+*****************************************
+1. Fiddler抓包工具设置
+  1. 设置Fiddler软件
+    1. https: Tools - options - HTTPS - ...from browsers only 
+       Actions 添加证书信任
+    2. connections: 设置端口号 8888
+    3. 重启Fiddler软件
+  2. 设置Chrome浏览器     
+    1. 安装代理切换插件:Proxy SwitchOmega
+    2. 选项 - 新建情景模式 - HTTP 127.0.0.1 8888 - 应用情景模式
+    3. 把代理切换到自己新建的情景模式上
+2. Fiddler常用菜单
+  1. Inspector : 查看数据包详细内容
+    1. 分为 请求(request) 和 响应(response) 两部分
+  2. 常用子选项卡
+    1. Headers : 显示请求头信息
+    2. WebForms: 显示POST数据,在body中
+    3. Raw     : 将整个请求显示为纯文本
+3. 抓取百度贴吧帖子中所有图片
+  1. 目标 : 指定贴吧所有帖子的图片
+  2. 思路
+    1. 获取贴吧主页URL,下一页,找URL规律
+    2. 获取1页中每个贴的URL
+    3. 对每个帖子URL发请求,获取帖子中图片URL
+    4. 依次对图片URL发请求,以wb方式保存到本地
+  3. 思路梳理
+    帖子链接列表 = parseHtml.xpath('....')
+    for 1个帖子链接 in 帖子链接列表:
+        html = 对每个帖子发请求得到响应
+        图片链接列表 = parseHtml.xpath('..')
+        for 1个图片链接 in 图片链接列表:
+            html = 对每个图片发请求得到响应
+            with open("aaa.jpg","wb") as f:
+                f.write(html)
+  4. 步骤
+    1. 获取贴吧主页URL
+      http://tieba.baidu.com/f? + 查询参数
+    2. 提取页面中所有帖子的URL
+      href : /p/5991484415
+        域名 + href 为帖子链接
+        http://tieba.baidu.com/p/5991484415
+      xpath表达式 ：//div[@class="t_con cleafix"]/div/div/div/a/@href
+    3. 每个帖子中图片的URL
+      //div[@class="d_post_content j_d_post_content  clearfix"]/img[@class="BDE_Image"]/@src
+
+
+
+
+
+4. 抓取百度贴吧帖子中所有视频以及图片
+  1. 视频小path匹配
+    //div[@class="video_src_wrapper"]/embed/@data-video
+  2. 注意 
+    在浏览器中匹配的不一定是真实的,此时
+    1. 更换User-Agent为IE
+    2. 把页面下载到本地,去查找位置
+5. 糗事百科(xpath高级用法)
+  1. 目标 : 用户昵称 内容 好笑数 评论数
+  2. 步骤
+    1. URL 
+      https://www.qiushibaike.com/text/
+    2. xpath表达式
+      1. 匹配出所有段子的对象
+        //div[contains(@id,"qiushi_tag_")]
+        结果:[<element...>,<element...>,..]
+      2. 利用节点对象调用xpath
+        for base in baseList:
+          用户昵称 : ./div/a/h2
+          段子内容 : 
+            ./a/div[@class="content"]/span
+          好笑数量 : .//i[@class="number"]
+                   [好笑数量对象,评论对象]
+          评论数量 : .//i[@class="number"]
+6. json模块
+  1. json格式的字符串和Python数据类型之间转换
+  2. json.loads(html) : json -> Python 
+  3. json.dumps(python)
+7. 动态网站数据抓取(Ajax)
+  1. 特点 : 滚动鼠标滑轮时加载
+  2. 案例 : 豆瓣电影排行榜数据抓取
+    1. 抓取目标 : 豆瓣电影 - 排行榜 - 剧情
+                 电影名称 评分
+    
+      
+type: 11
+interval_id: 100:90
+action: 
+start: 80
+limit: 20
+
+https://movie.douban.com/j/chart/top_list?type=11&interval_id=100%3A90&action=&start=80&limit=20
+
+
+
+
+
+
+
+
